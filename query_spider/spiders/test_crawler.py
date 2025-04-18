@@ -1,4 +1,5 @@
-from ps.layout import MainWindow
+from test.checklist import Test
+from query_spider.items import QueryScrapyItem
 import scrapy
 import os
 
@@ -12,25 +13,20 @@ class TestQuerySpider(scrapy.Spider):
             os.path.expanduser("~"), 
             "QueryScope/query_spider/spiders/resources/test_urls.txt"
         )
-        self.test_query = self.load_test_query()
 
-    def load_test_query(self, query):
-        from_pyside = MainWindow()
-        from_pyside.input_field.text()
-        query = "//meta[@property='og:url' and contains(@content, 'search?query=')]/@content"
-
-        return query
-        # return from_pyside.input_field.text()
-
-    def start_requests(self):
         with open(self.url_resource, "r") as f:
-            start_urls = [line.strip() for line in f.readlines() if line.strip()]
-
-        for url in start_urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+            urls = [line.strip() for line in f.readlines() if line.strip()]
+        
+        self.start_urls = urls
+        self.test_query = "//link[@rel='stylesheet']/@href"
     
     def parse(self, response):
-        results = response.xpath(self.test_query).getall()
-        yield {
-            "scraped_data": results
-        }
+        results = response.xpath(self.test_query).get()
+
+        item = QueryScrapyItem()
+        item['scraped_data'] = results
+        yield item 
+
+        
+    def get_data(self):
+        return self.results

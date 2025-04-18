@@ -18,13 +18,9 @@ from exceptions.test_exceptions import NoDataError
 import scrapy
 
 class Test(QueryScrapyItem):
-    test_scraped = scrapy.Field()
-
-    def __init__(self):
-        super().__init__() 
-        item = QueryScrapyItem['scraped_data']
-
-        self['test_scraped'] = item
+    def __init__(self, scraped_data):
+        super().__init__()
+        self['scraped_data'] = scraped_data
 
     def to_mp_graph(self, value_from_test):
         if self.check:
@@ -33,16 +29,20 @@ class Test(QueryScrapyItem):
             raise NoDataError
 
     def check(self):
-        positive = 0
+        result_from_test = 0
+        data = self['scraped_data']
+
+        if not isinstance(data, (list, tuple)):
+            data = [data]
 
         test_cases = [
-            {"nytimes": "https://www.nytimes.com/search?query="}
+            {"nytimes": "https://g1.nyt.com/fonts/css/web-fonts.d05a02583ca20b8afd5115f3ef8f1b8d134f743d.css"}
         ]
 
-        for case in self['test_scraped']:
+        for case in data:
             if case == test_cases[0]:
-                positive += 1
+                result_from_test += 1
                 
-                return f"{positive}"
+                return f"{result_from_test}"
             else:
                 return f"query did not get the test"

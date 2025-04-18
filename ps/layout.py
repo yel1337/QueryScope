@@ -6,10 +6,11 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize
 from mp.matplotlib import MatplotlibWidget
 from test.checklist import Test
-import os
+from query_spider.items import QueryScrapyItem
+from query_spider.spiders.test_crawler import TestQuerySpider
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, item_data, spider_instance=None):
         super().__init__()
         self.setWindowTitle("QueryScope")
         self.setGeometry(100, 100, 800, 600)
@@ -58,7 +59,13 @@ class MainWindow(QMainWindow):
     
         self.adjust_widget_sizes()
 
-        self.load_test_graph()
+        self.item_instance = QueryScrapyItem()
+        self.data_from_item = self.item_instance.get('scraped_data')
+
+        self.spider_instance = TestQuerySpider()
+
+        if self.spider_instance:
+            self.load_test_graph()
 
     def resizeEvent(self, event):
         """Resize widgets properly when window resizes."""
@@ -72,14 +79,10 @@ class MainWindow(QMainWindow):
         self.graph_widget.setFixedSize(half_width, half_height)
         self.log_widget.setFixedSize(half_width, half_height)
 
-    def log_message(self, message):
-        """Log messages to the text edit widget."""
-        self.log_widget.append(message)
-    
     def load_test_graph(self):
-        """Load test datas from test.checklist"""
-        test_instance = Test()
-        
-        test_data = str(test_instance.to_mp_graph(test_instance.check()))
+        """Load test data without creating a circular dependency."""
+        test_instance = Test(self.data_from_item)
+        test_data = str(test_instance.to_mp_graph(test_instance))
+            
         self.log_widget.setPlainText(test_data)
 
