@@ -13,36 +13,26 @@ using queries. If the query find it difficult or were not able to get the test c
 then it easy to tell that it did failed the test. 
 """
 
-from query_spider.items import QueryScrapyItem
 from exceptions.test_exceptions import NoDataError
+from query_spider.items import QueryScrapyItem
 import scrapy
 
-class Test(QueryScrapyItem):
-    def __init__(self, scraped_data):
+class Test:
+    def __init__(self):
         super().__init__()
-        self['scraped_data'] = scraped_data
 
-    def to_mp_graph(self, value_from_test):
-        if self.check:
-            return value_from_test
+    def to_mp_graph(self, data):
+        if self.check(data):
+            return self.check(data)
         else:
             raise NoDataError
 
-    def check(self):
-        result_from_test = 0
-        data = self['scraped_data']
-
-        if not isinstance(data, (list, tuple)):
-            data = [data]
-
+    def check(self, datas):
         test_cases = [
-            {"nytimes": "https://g1.nyt.com/fonts/css/web-fonts.d05a02583ca20b8afd5115f3ef8f1b8d134f743d.css"}
+            {"nytimes": "https://g1.nyt.com/fonts/css/web-fonts.c851560786173ad206e1f76c1901be7e096e8f8b.css"}
         ]
 
-        for case in data:
-            if case == test_cases[0]:
-                result_from_test += 1
-                
-                return f"{result_from_test}"
-            else:
-                return f"query did not get the test"
+        if datas == test_cases[0]["nytimes"]:
+            return f"test query did passed the test!"
+        else:
+            return f"test query did NOT passed the test!"

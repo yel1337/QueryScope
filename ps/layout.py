@@ -6,7 +6,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QSize
 from mp.matplotlib import MatplotlibWidget
 from test.checklist import Test
-from query_spider.items import QueryScrapyItem
 from query_spider.spiders.test_crawler import TestQuerySpider
 
 class MainWindow(QMainWindow):
@@ -59,8 +58,7 @@ class MainWindow(QMainWindow):
     
         self.adjust_widget_sizes()
 
-        self.item_instance = QueryScrapyItem()
-        self.data_from_item = self.item_instance.get('scraped_data')
+        self.data = item_data 
 
         self.spider_instance = TestQuerySpider()
 
@@ -81,8 +79,9 @@ class MainWindow(QMainWindow):
 
     def load_test_graph(self):
         """Load test data without creating a circular dependency."""
-        test_instance = Test(self.data_from_item)
-        test_data = str(test_instance.to_mp_graph(test_instance))
-            
-        self.log_widget.setPlainText(test_data)
+        test_instance = Test()
+        
+        if self.data:
+            check = test_instance.check(self.data)
+            self.log_widget.setPlainText(check)
 

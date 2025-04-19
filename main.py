@@ -9,6 +9,9 @@ import sys
 from query_spider.spiders.test_crawler import TestQuerySpider
 from ps.layout import MainWindow
 
+from test.checklist import Test
+from query_spider.items import QueryScrapyItem
+
 scraped_items = []
 
 class CollectorPipeline:
@@ -32,16 +35,15 @@ def crawl_and_start_gui():
 
     if scraped_items:
         print("Scraped:", scraped_items[0].get('scraped_data'))
-        item_data = scraped_items
+        item_data=scraped_items[0].get('scraped_data')
+
+        window=MainWindow(item_data, spider_instance=None)
+        window.show()
+        app.exec()
+        
     else:
         print("No scraped data found.")
-        item_data = []
-
-    window = MainWindow(item_data, spider_instance=None)
-    window.show()
-    app.exec()
-
-    reactor.stop()
+        item_data={}
 
 def initialize_application():
     reactor.callWhenRunning(crawl_and_start_gui)
