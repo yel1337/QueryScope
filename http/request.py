@@ -49,9 +49,8 @@ class Http:
             else:
                 data_dict["value"] = data_dict["url"][value_start_index]
 
-    def _payload_sort(self):
-        pass
-
+    def _get_sort(self, element):
+        return self.payload_dict[element][0]
 
     def do_request(self):
         get_request = requests.get(f"{self.url}, params={self._pass_payload}")
