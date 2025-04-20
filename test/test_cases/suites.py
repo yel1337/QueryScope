@@ -7,6 +7,7 @@ have one then the current test will fail.
 """
 
 from query_spider.items import QueryScrapyItem
+import sys
 
 try:
     QueryScrapyItem
@@ -31,6 +32,7 @@ def crawl_and_start_gui():
     })
 
 from exceptions.test_exceptions import NoDataErrorFromPipeline
+from http import Http
 from test.validate import Validate
 
 class Cases:
@@ -44,6 +46,8 @@ class Cases:
         self.data_from_collector = data_from_collector
         self.signal = None
 
+        self.http_request = Http()
+
         """
         Number of results will be stored in this dictionary
         """
@@ -53,32 +57,66 @@ class Cases:
         }
 
         if self.data_from_collector is not None:
-            self.signal = True
+            return self.signal = True
         else:
-            self.signal = False
+            return self.signal = False
             raise NoDataErrorFromPipeline
+            sys.exit(0)
 
-    def _test_one(self, signal):
+    def _data_len(self, data: str) -> int: 
+        data = self.data_from_collector 
+        return len(data)
+    
+    def _parameter_indicators(self, index) -> int:
+        indicators = ["?", "="]
+        return indicators(index)
+
+    # This method will be use throughout the code as a sort of signal for two result values
+    def _result_signal(self, result_signal: int) -> bool:
+        result_passed = True
+        result_failed = False
+
+        if isinstance(result_signal, int):
+            if result_signal == 1:
+                return result_passed
+            elif result_signal == 0:
+                return result_failed
+        else:
+            raise TypeError(f"TypeError: Only accepts int for {result_signal}!")        
+
+    def _test_one(self) -> bool:
         """
-        Test the result if it contains parameter indicators otherwise will fail the test
+        # Test the result if it contains parameter indicators otherwise will fail the test
+        
+        ### Example of scraped data with parameter indicators: 
+            (https//:www.example.com/search?=) where "?" and "=" are parameter indicators   
         """
-        len_of_set = len(self.data_from_collector)
-        required_string = ["?", "="]
-        if signal:
-            for data in range(len_of_set):
-                len_of_data = len(data)
+        if self.signal:
+            for data in range(_data_len):
                 # This will goes for each of every character of the set 
                 for character in range(len_of_data):
-                    if character == required_string[0] and character[range(len_of_data+1)]:
-                        return True
+                    if character == self._parameter_indicators[0] and character[range(_data_len+1)]:
+                        return self._result_signal(1)
 
                         break 
-                    elif character == required_string[0] and character[range(len_of_data+1)]:
-                        return False
+                    elif character == self._parameter_indicators[0] and character[range(_data_len+1)]:
+                        return self._result_signal(0)
 
                        break
-
-    @property 
+    
+    def _test_two(self) -> bool:
+        """
+        This Second Test Case will ensure the url along with the query will return 200
+        if not then it will return status code 401 indicating the query along with the 
+        url didn't work as it supposed to. 
+        """
+        self.http_request.do_request()
+        
+        if self.http_request.request_status_code == 200:
+            return self._result_signal(1)
+        elif self.http_request.request_status_code == 401:
+            return self._result_signal(0)
+ 
     def _collect_result(self):
         yield self.results {
             "pass": self.result_pass,

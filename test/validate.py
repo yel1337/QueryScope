@@ -42,7 +42,7 @@ class Validate:
     RETURN_WITHOUT_DATA = 1
     RETURN_WITH_ERROR = 2
     
-    def _if_str(self, data):
+    def _if_str(self, data: int):
         return isinstance(data, int)
     
     def _if_not(self, data):

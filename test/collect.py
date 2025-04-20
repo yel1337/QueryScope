@@ -11,5 +11,6 @@ class Results:
         reference
         """
         query: str = None
-        result_pass: str = None
-        result_fail: str = None
+        url: str = None
+        result_pass: int = None
+        result_fail: int = None
