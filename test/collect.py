@@ -10,7 +10,8 @@ class Results:
         These can be exported to json format or any supported types for
         reference
         """
-        query: str = None
+        request_query: str = None
+        xpath_query: str = None
         url: str = None
         result_pass: int = None
         result_fail: int = None
