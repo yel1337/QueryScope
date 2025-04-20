@@ -7,8 +7,11 @@ class Http:
         self.query = results.request_query
         self.payload_dict = dict()
 
-    def _pass_payload(self):
-        pass
+    def _pass_payload(self) -> dict:
+        return [
+            self.payload_dict["query"][0],
+            self.payload_dict["value"][0]
+        ]
 
     def sort_url(self):
         self.payload_dict["url"] = self.url
