@@ -142,6 +142,3 @@ class Cases:
         value_for_validator = yield self._collect_result
         
         return value_for_validator
-
-
-
