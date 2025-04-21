@@ -110,13 +110,22 @@ class Cases:
         if not then it will return status code 401 indicating the query along with the 
         url didn't work as it supposed to. 
         """
-        self.http_request.do_request()
+        try:
+            self.http_request.do_request()
         
-        if self.http_request.request_status_code == 200:
-            return self._result_signal(1)
-        elif self.http_request.request_status_code == 401:
-            return self._result_signal(0)
- 
+            if self.http_request.request_status_code == 200:
+                return self._result_signal(1)
+            elif self.http_request.request_status_code == 401:
+                return self._result_signal(0)
+        except requests.exceptions.HTTPError as errh:
+            f"{errh}"
+        except requests.exceptions.ConnectionError as errc:
+            f"{errc}"
+        except requests.exceptions.Timeout as errt:
+            f"{errt}"
+        except requests.exceptions.RequestException as err:
+            f"{err}"
+            
     def _collect_result(self):
         yield self.results {
             "pass": self.result_pass,
