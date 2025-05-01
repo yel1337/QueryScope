@@ -22,6 +22,17 @@ class CollectorPipeline:
         scraped_items.append(item)
         return item
 
+class WebTest:
+    def __init__(self):
+        self.web_dict = {
+            "test_web_1": "https://www.nytimes.com/",
+            "test_web_2": "https://www.amazon.com",
+            "test_web_3": "https://www.youtube.com",
+            "test_web_4": "https://en.wikipedia.org/wiki/Main_Page",
+            "test_web_5": "https://www.designspiration.com/"
+        }
+
+
 from scrapy.crawler import CrawlerRunner
 
 def crawl_and_start_gui():
@@ -31,8 +42,16 @@ def crawl_and_start_gui():
         }
     })
 
+# Get scraped data from item pipeline
+def item_from_pipeline(self):
+    pass
+
+class NoSortedValue(Exception):
+    pass
+
 from exceptions.test_exceptions import NoDataErrorFromPipeline
 from http import Http
+from 
 from test.validate import Validate
 
 class Cases:
@@ -91,22 +110,23 @@ class Cases:
         ### Example of scraped data with parameter indicators: 
             (https//:www.example.com/search?=) where "?" and "=" are parameter indicators   
         """
-        if self.signal:
-            for data in range(_data_len):
-                # This will goes for each of every character of the set 
-                for character in range(len_of_data):
-                    if character == self._parameter_indicators[0] and character[range(_data_len+1)]:
-                        return self._result_signal(1)
+        with_url = self.http_request.payload_dict["url"]
+        with_query = self.http_request.payload_dict["query"]
+        with_value = self.http_request.payload_dict["value"]
 
-                        break 
-                    elif character == self._parameter_indicators[0] and character[range(_data_len+1)]:
-                        return self._result_signal(0)
+        try:
+            if with_query and with_value:
+                return result_signal(1)
+            else:
+                raise NoSortedValue
+        except NoSortedValue as errsv:
+            f{"errsv"}
+            return result_signal(0)
 
-                       break
     
     def _test_two(self) -> bool:
         """
-        This Second Test Case will ensure the url along with the query will return 200
+        _test_two will ensure the url along with the query will return 200
         if not then it will return status code 401 indicating the query along with the 
         url didn't work as it supposed to. 
         """
@@ -125,7 +145,10 @@ class Cases:
             f"{errt}"
         except requests.exceptions.RequestException as err:
             f"{err}"
-            
+
+    def _test_three(self):
+        pass    
+
     def _collect_result(self):
         yield self.results {
             "pass": self.result_pass,

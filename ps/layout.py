@@ -36,13 +36,13 @@ class MainWindow(QMainWindow):
         right_layout.addStretch(1.2)  # Push input field up
         
         self.input_field = QLineEdit()
-        self.input_field.setPlaceholderText("XPath query...")
+        self.input_field.setPlaceholderText("xpath query goes here...")
         self.input_field.setFixedWidth(200)
         self.input_field.setAlignment(Qt.AlignCenter)
         right_layout.addWidget(self.input_field, alignment=Qt.AlignHCenter)
 
         self.submit_button = QPushButton("Submit")
-        self.submit_button.setFixedWidth(150)
+        self.submit_button.setFixeduWidth(150)
         right_layout.addWidget(self.submit_button, alignment=Qt.AlignHCenter)
 
         right_layout.addStretch(3)  # Push remaining space down

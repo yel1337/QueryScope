@@ -8,56 +8,49 @@ class Http:
         self.payload_dict = dict()
 
     def _pass_payload(self) -> dict:
-        return [
+        return {
             self.payload_dict["query"][0],
             self.payload_dict["value"][0]
-        ]
+        }
 
     def sort_url(self):
         self.payload_dict["url"] = self.url
-        protocol_end_index = data_dict["url"].find("://")
+        protocol_end_index = self.payload_dict["url"].find("://")
 
         if protocol_end_index != -1:
-            data_dict["protocol"] = data_dict["url"][:protocol_end_index]
+            self.payload_dict["protocol"] = self.payload_dict["url"][:protocol_end_index]
             domain_start_index = protocol_end_index + 3
 
-            domain_end_index = data_dict["url"].find("/", domain_start_index)
+            domain_end_index = self.payload_dict["url"].find("/", domain_start_index)
+        if domain_end_index != -1:
+            self.payload_dict["domain"] = self.payload_dict["url"][domain_start_index:domain_end_index]
+        else:
+            self.payload_dict["domain"] = self.payload_dict["url"][domain_start_index:]
+            return
 
-            if domain_end_index != -1:
-                data_dict["domain"] = data_dict["url"][domain_start_index:domain_end_index]
-            else:
-                data_dict["domain"] = data_dict["url"][domain_start_index:]
+        path_start_index = domain_end_index + 1
+        query_start_index = self.payload_dict["url"].find("?", path_start_index)
+        if query_start_index != -1:
+            self.payload_dict["path"] = self.payload_dict["url"][path_start_index:query_start_index]
+        else:
+            self.payload_dict["path"] = self.payload_dict["url"][path_start_index:]
+            return
 
-            path_start_index = domain_end_index + 1
-            path_end_index = data_dict["url"].find("?", path_start_index)
+        query_string = self.payload_dict["url"][query_start_index + 1:]
+        if "=" in query_string:
+            key, value = query_string.split("=", 1)
+            self.payload_dict["query"] = key
+            self.payload_dict["value"] = value
 
-            if path_end_index != -1:
-                data_dict["path"] = data_dict["url"][path_start_index:path_end_index]
-            else:
-                data_dict["path"] = data_dict["url"][path_start_index]
-
-            query_start_index = path_end_index + 1
-            query_end_index = data_dict["url"].find("=", query_start_index)
-
-            if query_end_index != -1:
-                data_dict["query"] = data_dict["url"][query_start_index:query_end_index]
-            else:
-                data_dict["query"] = data_dict["url"][query_start_index]
-            
-            value_start_index = query_end_index + 1
-            value_end_index = data_dict["url"].find("", value_start_index)
-
-            if value_end_index != -1:
-                data_dict["value"]= data_dict["url"][value_start_index:value_end_index]
-            else:
-                data_dict["value"] = data_dict["url"][value_start_index]
-
-    def _get_sort(self, element):
+    def _get_sort(self, element: str):
+        # By default index 0 or [0] is set as default
         return self.payload_dict[element][0]
 
     def do_request(self):
-        get_request = requests.get(f"{self.url}, params={self._pass_payload}")
-        return get_request
+        if self._pass_payload is None:
+            self._pass_payload = {}
+
+        requests.get(f"{self.url}, params={self._pass_payload}")
 
     def request_status_code(self) -> int:
         with_get = self.do_request
